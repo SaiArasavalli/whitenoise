@@ -1,0 +1,128 @@
+<div
+  class="vh-100 d-flex align-items-center justify-content-center gap-5 flex-column"
+>
+  <h1 class="fw-bold">New Game</h1>
+  <form class="col-4" [formGroup]="gameForm" (ngSubmit)="onSubmit()">
+    <select
+      class="form-select bg-dark shadow-sm p-3 text-light mb-2"
+      formControlName="board"
+      name="board"
+      autocomplete="off"
+    >
+      <option value="" selected disabled hidden>Select Board</option>
+      <option [value]="board.name" *ngFor="let board of boards">
+        {{ board.name }}
+      </option>
+    </select>
+    <input
+      type="time"
+      name="startTime"
+      autocomplete="off"
+      class="form-control bg-dark p-3 shadow-sm text-light mb-2"
+      placeholder="Start Time"
+      formControlName="startTime"
+    />
+    <input
+      type="time"
+      name="endTime"
+      autocomplete="off"
+      class="form-control bg-dark shadow-sm p-3 text-light mb-2"
+      placeholder="End Time"
+      formControlName="endTime"
+    />
+    <button
+      type="button"
+      class="btn btn-primary my-3 d-flex align-items-center gap-2 text-light"
+      (click)="addItems()"
+    >
+      Player
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        fill="white"
+        class="bi bi-plus-circle-fill"
+        viewBox="0 0 16 16"
+      >
+        <path
+          d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z"
+        />
+      </svg>
+    </button>
+    <div class="" formArrayName="players">
+      <div
+        *ngFor="let player of players.controls; let i = index"
+        [formGroupName]="i"
+        class="d-flex gap-2 my-2 align-items-center"
+      >
+        <div class="form-check form-switch mt-3">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            role="switch"
+            [id]="'flexSwitchCheckDefault' + i"
+            autocomplete="off"
+            [checked]="players.controls[i].get('lost')?.value"
+            formControlName="lost"
+          />
+        </div>
+        <select
+          class="form-select bg-dark shadow-sm p-3 text-light"
+          formControlName="name"
+          [name]="'name' + i"
+          autocomplete="off"
+        >
+          <option value="" selected disabled hidden>Select Player</option>
+          <option [value]="customer.name" *ngFor="let customer of customers">
+            {{ customer.name }}
+          </option>
+        </select>
+        <select
+          class="form-select bg-dark shadow-sm p-3 text-light"
+          formControlName="payment"
+          [name]="'payment' + i"
+          autocomplete="off"
+          *ngIf="player.get('lost')?.value"
+        >
+          <option value="" selected disabled hidden>Select Payment</option>
+          <option value="PAID">PAID</option>
+          <option value="PENDING">PENDING</option>
+        </select>
+        <button type="button" (click)="removeItem(i)" class="btn btn-dark">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            fill="#dc3545"
+            class="bi bi-trash3-fill"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <input
+      type="date"
+      name="data"
+      autocomplete="off"
+      class="form-control bg-dark shadow-sm p-3 text-light mb-2"
+      placeholder="Date"
+      formControlName="created"
+    />
+    <button
+      class="btn btn-warning shadow w-100 mt-3 p-3"
+      *ngIf="!submitting"
+      [disabled]="!gameForm.valid"
+    >
+      Add
+    </button>
+    <button class="btn btn-warning shadow w-100 mt-3 p-3" *ngIf="submitting">
+      <div class="spinner-border spinner-border-sm" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </button>
+  </form>
+</div>

@@ -1,0 +1,17 @@
+<div
+  class="vh-100 d-flex align-items-center justify-content-center gap-5 flex-column"
+>
+  <h1 class="fw-bold">Delete Customer</h1>
+  <p>Are you sure?</p>
+  <div class="d-inline-flex gap-3">
+    <button class="btn btn-secondary" (click)="goBack()">No</button>
+    <button class="btn btn-danger" *ngIf="!submitting" (click)="onSubmit()">
+      Yes
+    </button>
+    <button class="btn btn-warning" *ngIf="submitting">
+      <div class="spinner-border spinner-border-sm" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </button>
+  </div>
+</div>

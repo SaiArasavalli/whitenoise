@@ -1,0 +1,142 @@
+<div class="my-5 d-flex align-items-center justify-content-between">
+  <h1 class="fw-bold">Orders</h1>
+  <div class="d-inline-flex gap-3">
+    <a class="btn btn-dark p-3" routerLink="/orders/add"> Add Order </a>
+    <a class="btn btn-dark p-3" routerLink="/orders/add/share"> Share Order </a>
+  </div>
+</div>
+<div>
+  <form [formGroup]="searchForm" class="d-flex gap-3">
+    <input
+      type="search"
+      name="name"
+      autocomplete="off"
+      class="form-control p-3 bg-dark shadow-sm text-light"
+      placeholder="Search Order By Customer"
+      formControlName="name"
+    />
+    <select
+      class="form-select p-3 bg-dark shadow-sm text-light"
+      formControlName="payment"
+      name="payment"
+      autocomplete="off"
+    >
+      <option value="">All Payments</option>
+      >
+      <option value="PAID">PAID</option>
+      >
+      <option value="PENDING">PENDING</option>
+    </select>
+  </form>
+</div>
+<div class="my-3">
+  <div
+    *ngIf="loadingOrders && loadingMenu"
+    class="d-flex align-items-center gap-2"
+  >
+    <div class="spinner-border spinner-border-sm text-warning" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <div class="text-warning">Fetching Orders</div>
+  </div>
+  <table class="table table-hover" *ngIf="!loadingOrders && !loadingMenu">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Customer</th>
+        <th scope="col">Items</th>
+        <th scope="col">Amount</th>
+        <th scope="col">Payment</th>
+        <th scope="col">Ordered On</th>
+        <th scope="col" *ngIf="!isAdmin">Actions</th>
+        <th scope="col" colspan="2" *ngIf="isAdmin">Actions</th>
+        <th scope="col">Comments</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of filteredOrders; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ order.customer }}</td>
+        <td style="text-align: left">
+          <div *ngFor="let item of order.items">
+            {{ item.name }} ( {{ item.quantity }} ) ==
+            {{
+              calculatePrice(item) * item.quantity | currency : "INR" : "Rs. "
+            }}
+          </div>
+        </td>
+        <td>{{ order.totalAmount | currency : "INR" : "Rs. " }}</td>
+        <td>
+          <button
+            *ngIf="order.payment === 'PAID'"
+            class="disabled btn btn-success"
+          >
+            PAID
+          </button>
+          <button
+            *ngIf="order.payment === 'PENDING'"
+            class="disabled btn btn-warning"
+          >
+            PENDING
+          </button>
+        </td>
+        <td *ngIf="order.created">
+          {{ order.created.toDate() | date : "mediumDate" }}
+        </td>
+        <td>
+          <a class="btn" routerLink="/orders/{{ order.id }}/edit">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              fill="#20c997"
+              class="bi bi-pencil-fill"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"
+              />
+            </svg>
+          </a>
+        </td>
+        <td *ngIf="isAdmin">
+          <a class="btn" routerLink="/orders/{{ order.id }}/delete">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              fill="#dc3545"
+              class="bi bi-trash3-fill"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"
+              />
+            </svg>
+          </a>
+        </td>
+        <td>
+          <a
+            class="btn"
+            *ngIf="order.comment"
+            routerLink="/orders/{{ order.id }}/edit"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="30"
+              height="30"
+              fill="white"
+              class="bi bi-eye-fill"
+              viewBox="0 0 16 16"
+            >
+              <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
+              <path
+                d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"
+              />
+            </svg>
+          </a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

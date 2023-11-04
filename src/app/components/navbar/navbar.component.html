@@ -1,0 +1,74 @@
+<nav class="navbar navbar-expand-lg fixed-top bg-dark p-0" data-bs-theme="dark">
+  <div class="container-fluid px-5">
+    <span class="navbar-brand">
+      <img
+        src="../../../assets/logo.png"
+        alt="White Noise Logo"
+        width="60"
+        height="60"
+        class="d-inline-block align-text-top"
+      />
+    </span>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav ms-auto gap-3" *ngIf="isUserLoggedIn">
+        <a
+          class="nav-link"
+          routerLink="/"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >Home</a
+        >
+        <a
+          class="nav-link"
+          routerLink="/games"
+          routerLinkActive="active"
+          *ngIf="isAdmin"
+          >Games</a
+        >
+        <a
+          class="nav-link"
+          routerLink="/orders"
+          routerLinkActive="active"
+          *ngIf="isAdmin"
+          >Orders</a
+        >
+        <a class="nav-link" routerLink="/customers" routerLinkActive="active"
+          >Customers</a
+        >
+        <a
+          class="nav-link"
+          routerLink="/boards"
+          routerLinkActive="active"
+          *ngIf="isAdmin"
+          >Boards</a
+        >
+        <a
+          class="nav-link"
+          routerLink="/menu"
+          routerLinkActive="active"
+          *ngIf="isAdmin"
+          >Menu</a
+        >
+        <a
+          class="nav-link"
+          routerLink="/bill"
+          routerLinkActive="active"
+          *ngIf="isAdmin"
+          >Bill</a
+        >
+        <button class="btn btn-danger" (click)="signOutUser()">Logout</button>
+      </div>
+    </div>
+  </div>
+</nav>

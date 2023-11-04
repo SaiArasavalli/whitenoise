@@ -1,0 +1,154 @@
+<div class="container-fluid p-5 my-5">
+  <div class="d-flex justify-content-evenly row">
+    <div class="col-4">
+      <h2 class="mt-5 mb-3 text-center">Games</h2>
+      <form
+        [formGroup]="gamePlayerForm"
+        class="d-flex flex-column gap-3"
+        (ngSubmit)="gameAmount()"
+      >
+        <select
+          class="form-select bg-dark shadow-sm p-3 text-light"
+          formControlName="player"
+          name="customer"
+          autocomplete="off"
+        >
+          <option value="" selected disabled hidden>Select Player</option>
+          <option
+            [value]="customer.name"
+            *ngFor="let customer of nonSubCustomers"
+          >
+            {{ customer.name }}
+          </option>
+        </select>
+        <input
+          type="date"
+          name="startDate"
+          autocomplete="off"
+          class="form-control p-3 bg-dark shadow-sm text-light"
+          placeholder="Start Date"
+          formControlName="startDate"
+        />
+
+        <input
+          type="date"
+          name="endDate"
+          autocomplete="off"
+          class="form-control p-3 bg-dark shadow-sm text-light"
+          placeholder="End Date"
+          formControlName="endDate"
+        />
+        <button class="btn btn-warning p-3">Calculate</button>
+      </form>
+      <h1 class="fw-bold text-warning my-4 text-center" *ngIf="nonSubgameSum">
+        {{ round(nonSubgameSum) | currency : "INR" }} <br />
+        <span
+          class="fs-5"
+          *ngIf="gamePlayerForm.value.startDate && gamePlayerForm.value.endDate"
+        >
+          [ {{ gamePlayerForm.value.startDate | date : "mediumDate" }} -
+          {{ gamePlayerForm.value.endDate | date : "mediumDate" }}
+          ]
+        </span>
+      </h1>
+    </div>
+    <div class="col-4">
+      <h2 class="mt-5 mb-3 text-center">Games (Sub)</h2>
+      <form
+        [formGroup]="gameForm"
+        class="d-flex flex-column gap-3"
+        (ngSubmit)="gameAmountSub()"
+      >
+        <select
+          class="form-select bg-dark shadow-sm p-3 text-light"
+          formControlName="player"
+          name="customer"
+          autocomplete="off"
+        >
+          <option value="" selected disabled hidden>Select Subscriber</option>
+          <option [value]="customer.name" *ngFor="let customer of subCustomers">
+            {{ customer.name }}
+          </option>
+        </select>
+        <input
+          type="date"
+          name="startDate"
+          autocomplete="off"
+          class="form-control p-3 bg-dark shadow-sm text-light"
+          placeholder="Start Date"
+          formControlName="startDate"
+        />
+
+        <input
+          type="date"
+          name="endDate"
+          autocomplete="off"
+          class="form-control p-3 bg-dark shadow-sm text-light"
+          placeholder="End Date"
+          formControlName="endDate"
+        />
+        <button class="btn btn-warning p-3">Calculate</button>
+      </form>
+      <h1 class="fw-bold text-warning my-4 text-center" *ngIf="subgameSum">
+        {{ round(subgameSum) }} min <br />
+        <span
+          class="fs-5"
+          *ngIf="gameForm.value.startDate && gameForm.value.endDate"
+        >
+          [ {{ gameForm.value.startDate | date : "mediumDate" }} -
+          {{ gameForm.value.endDate | date : "mediumDate" }}
+          ]
+        </span>
+      </h1>
+    </div>
+    <div class="col-4">
+      <h2 class="mt-5 mb-3 text-center">Orders</h2>
+      <form
+        [formGroup]="orderForm"
+        class="d-flex flex-column gap-3"
+        (ngSubmit)="orderAmount()"
+      >
+        <select
+          class="form-select bg-dark shadow-sm p-3 text-light"
+          formControlName="player"
+          name="customer"
+          autocomplete="off"
+        >
+          <option value="" selected disabled hidden>Select Customer</option>
+          <option [value]="customer.name" *ngFor="let customer of customers">
+            {{ customer.name }}
+          </option>
+        </select>
+        <input
+          type="date"
+          name="startDate"
+          autocomplete="off"
+          class="form-control p-3 bg-dark shadow-sm text-light"
+          placeholder="Start Date"
+          formControlName="startDate"
+        />
+
+        <input
+          type="date"
+          name="endDate"
+          autocomplete="off"
+          class="form-control p-3 bg-dark shadow-sm text-light"
+          placeholder="End Date"
+          formControlName="endDate"
+        />
+        <button class="btn btn-warning p-3">Calculate</button>
+      </form>
+      <h1 class="fw-bold text-warning my-4 text-center" *ngIf="orderSum">
+        {{ orderSum | currency : "INR" }} <br />
+        <span
+          class="fs-5"
+          *ngIf="orderForm.value.startDate && orderForm.value.endDate"
+        >
+          [ {{ orderForm.value.startDate | date : "mediumDate" }} -
+          {{ orderForm.value.endDate | date : "mediumDate" }}
+          ]
+        </span>
+      </h1>
+    </div>
+  </div>
+</div>

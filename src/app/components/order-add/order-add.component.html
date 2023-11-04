@@ -1,0 +1,126 @@
+<div
+  class="vh-100 d-flex align-items-center justify-content-center gap-5 flex-column"
+>
+  <h1 class="fw-bold">New Order</h1>
+  <form [formGroup]="orderForm" (ngSubmit)="onSubmit()" class="col-4">
+    <div class="d-flex gap-3">
+      <select
+        class="form-select bg-dark shadow-sm p-3 text-light w-75"
+        formControlName="customer"
+        name="customer"
+        autocomplete="off"
+      >
+        <option value="" selected disabled hidden>Select Customer</option>
+        <option [value]="customer.name" *ngFor="let customer of customers">
+          {{ customer.name }}
+        </option>
+      </select>
+      <a
+        routerLink="/customers/add"
+        class="btn btn-success w-25 text-center d-flex align-items-center justify-content-center"
+        >New Customer</a
+      >
+    </div>
+
+    <div class="d-flex align-items-center justify-content-between">
+      <button
+        type="button"
+        class="btn btn-primary my-3 d-flex align-items-center gap-2 text-light"
+        (click)="addItems()"
+      >
+        Item
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          fill="white"
+          class="bi bi-plus-circle-fill"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z"
+          />
+        </svg>
+      </button>
+      <span class="d-flex align-items-center"
+        >Total Amount : &nbsp;
+        <span class="fw-bold fs-5" style="color: #712cf9">
+          {{ calculateTotalAmount() | currency : "INR" }}</span
+        ></span
+      >
+    </div>
+    <div class="" formArrayName="items">
+      <div
+        *ngFor="let item of items.controls; let i = index"
+        [formGroupName]="i"
+        class="d-flex gap-2 my-2"
+      >
+        <select
+          class="form-select bg-dark shadow-sm p-3 text-light"
+          formControlName="name"
+          [name]="'itemName' + i"
+          autocomplete="off"
+        >
+          <option value="" selected disabled hidden>Select Item</option>
+          <option value="Payment">Payment</option>
+          <option [value]="item.name" *ngFor="let item of menu">
+            {{ item.name }}
+          </option>
+        </select>
+        <input
+          type="number"
+          [name]="'quantity' + i"
+          autocomplete="off"
+          class="form-control bg-dark shadow-sm p-3 text-light"
+          placeholder="Quantity"
+          formControlName="quantity"
+          min="1"
+        />
+        <button type="button" (click)="removeItem(i)" class="btn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            fill="#dc3545"
+            class="bi bi-trash3-fill"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <select
+      class="form-select bg-dark shadow-sm p-3 text-light mt-3"
+      formControlName="payment"
+      name="payment"
+      autocomplete="off"
+    >
+      <option value="" selected disabled hidden>Select Payment</option>
+      <option value="PAID">PAID</option>
+      <option value="PENDING">PENDING</option>
+    </select>
+    <input
+      type="date"
+      name="date"
+      autocomplete="off"
+      class="form-control bg-dark shadow-sm p-3 text-light my-2"
+      placeholder="Date"
+      formControlName="created"
+    />
+    <button
+      class="btn btn-warning shadow w-100 mt-3 p-3"
+      *ngIf="!submitting"
+      [disabled]="!orderForm.valid"
+    >
+      Add
+    </button>
+    <button class="btn btn-warning shadow w-100 mt-3 p-3" *ngIf="submitting">
+      <div class="spinner-border spinner-border-sm" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </button>
+  </form>
+</div>

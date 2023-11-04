@@ -1,0 +1,14 @@
+<div *ngIf="loading" class="d-flex align-items-center gap-2">
+  <div class="spinner-border spinner-border-sm text-warning" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+  <div class="text-warning">Fetching Timers</div>
+</div>
+<div *ngIf="!loading" class="row row-cols-2 g-5 py-5">
+  <app-timer
+    *ngFor="let board of boards; let i = index"
+    class="col"
+    [board]="board"
+    [i]="i"
+  ></app-timer>
+</div>

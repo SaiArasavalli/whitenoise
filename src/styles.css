@@ -1,1 +1,41 @@
-/* You can add global styles to this file, and also import other style files */
+body {
+  color: #dee2e6;
+  background: #1b1f22;
+}
+
+input,
+select {
+  border: 1px solid gray !important;
+}
+
+input:focus,
+select:focus {
+  box-shadow: none;
+  border: 1px solid #ffd000 !important;
+}
+
+input::placeholder,
+select::placeholder {
+  color: gray !important;
+}
+
+thead tr th {
+  background: #212529 !important;
+  color: #dee2e6 !important;
+}
+
+tr,
+th,
+td {
+  color: white !important;
+  background: #1b1f22 !important;
+  padding: 15px !important;
+  border: 1px solid #2d2d2d;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.table-container {
+  height: 650px !important;
+  overflow-y: scroll !important;
+}

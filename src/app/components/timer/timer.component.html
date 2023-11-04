@@ -1,0 +1,179 @@
+<div class="card text-bg-dark shadow-sm">
+  <div class="card-body">
+    <div
+      class="header d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom border-secondary"
+    >
+      <button class="btn btn-dark disabled fw-bold">
+        {{ board.name }}
+      </button>
+      <div class="d-flex align-items-center gap-3">
+        <span class="fw-bold fs-1"
+          >{{ duration }}
+          <span class="fw-bold fs-6">{{ durationSeconds }}</span>
+        </span>
+        <button class="btn" *ngIf="!startTime" (click)="start()">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="40"
+            height="40"
+            fill="#20c997"
+            class="bi bi-play-fill"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <div class="dropdown">
+        <button class="btn border-0" type="button" data-bs-toggle="dropdown">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="30"
+            height="30"
+            fill="gray"
+            class="bi bi-dot"
+            viewBox="0 0 16 16"
+          >
+            <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
+          </svg>
+        </button>
+        <ul class="dropdown-menu" data-bs-theme="dark">
+          <li class="dropdown-item">
+            <button class="btn btn-danger w-100" (click)="stop()">Stop</button>
+          </li>
+          <li class="dropdown-item">
+            <button class="btn btn-primary w-100" (click)="reset()">
+              Reset
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="d-flex align-items-center justify-content-center gap-5">
+      <span class="fs-2 fw-bold" style="color: #5fffcf">{{
+        startTime ? (startTime | date : "shortTime") : "--:-- --"
+      }}</span>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="30"
+        height="30"
+        fill="white"
+        class="bi bi-arrow-left-right"
+        viewBox="0 0 16 16"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5zm14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5z"
+        />
+      </svg>
+      <span class="fs-2 fw-bold" style="color: #ff5b6b">{{
+        endTime ? (endTime | date : "shortTime") : "--:-- --"
+      }}</span>
+    </div>
+    <div *ngIf="showStartTimeEditForm" class="bg-dark p-3">
+      <form
+        [formGroup]="startTimeForm"
+        (ngSubmit)="onStartTimeEdit()"
+        class="d-flex align-items-center justify-content-between gap-3"
+      >
+        <input
+          type="time"
+          name="startTime"
+          autocomplete="off"
+          class="form-control bg-dark p-3 text-light mb-2 shadow-sm"
+          placeholder="Start Time"
+          formControlName="startTime"
+        />
+        <button class="btn btn-warning">Edit</button>
+      </form>
+    </div>
+    <div
+      class="d-flex align-items-center justify-content-center my-3 gap-3"
+      *ngIf="startTime"
+    >
+      <button class="btn btn-primary" (click)="openStartTimeEditForm()">
+        Edit Start Time
+      </button>
+
+      <button class="btn btn-primary" (click)="addItems()">Add Player</button>
+      <a
+        routerLink="/customers/add"
+        routerLinkActive="active"
+        class="btn btn-primary"
+        >New Player</a
+      >
+    </div>
+    <form [formGroup]="gameForm" (ngSubmit)="onSubmit()">
+      <div class="" formArrayName="players">
+        <div
+          *ngFor="let player of players.controls; let i = index"
+          [formGroupName]="i"
+          class="d-flex gap-2 my-2 align-items-center"
+        >
+          <div class="form-check form-switch">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              role="switch"
+              [id]="'flexSwitchCheckDefault' + i"
+              autocomplete="off"
+              [checked]="players.controls[i].get('lost')?.value"
+              formControlName="lost"
+            />
+          </div>
+          <select
+            class="form-select bg-dark p-3 text-light"
+            formControlName="name"
+            [name]="'name' + i"
+            autocomplete="off"
+          >
+            <option value="" selected disabled hidden>Select Player</option>
+            <option [value]="customer.name" *ngFor="let customer of customers">
+              {{ customer.name }}
+            </option>
+          </select>
+          <select
+            class="form-select bg-dark p-3 text-light"
+            formControlName="payment"
+            [name]="'payment' + i"
+            autocomplete="off"
+            *ngIf="player.get('lost')?.value"
+          >
+            <option value="" selected disabled hidden>Select Payment</option>
+            <option value="PAID">PAID</option>
+            <option value="PENDING">PENDING</option>
+          </select>
+          <button type="button" (click)="removeItem(i)" class="btn btn-dark">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              fill="#dc3545"
+              class="bi bi-trash3-fill"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <button
+        class="btn btn-warning p-3 text-light px-5 w-100 mt-3"
+        *ngIf="startTime && gameForm.value.players?.length !== 0"
+        [disabled]="gameForm.invalid || !endTime"
+      >
+        <div *ngIf="!submitting">Save</div>
+        <div *ngIf="submitting">
+          <div class="spinner-border spinner-border-sm" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </button>
+    </form>
+  </div>
+</div>
