@@ -139,31 +139,45 @@ export class CalciComponent {
       ? new Date(this.gamePlayerForm.value.endDate)
       : null;
 
-    this.games.forEach((game) => {
-      const res = game.players?.filter((player) => {
-        player.name === 'Sai';
+    if (gamePlayer && (!startDate || !endDate)) {
+      this.games.forEach((game) => {
+        game.players?.forEach((player) => {
+          if (player.name === gamePlayer && player.payment === 'PENDING') {
+            console.log(game.created.toDate());
+            this.nonSubgameSum += this.round(
+              this.calculateTotalAmount(
+                game.board,
+                game.startTime,
+                game.endTime!
+              ) / this.countLostPlayers(game.players!)
+            );
+            console.log(this.nonSubgameSum);
+          }
+        });
       });
-      console.log(res);
-
-      if (gamePlayer && (!startDate || !endDate)) {
-        if (
-          game.players?.find((player) => {
+    } else if (gamePlayer && startDate && endDate) {
+      this.games.forEach((game) => {
+        const playedCreatedDate = new Date(game.created.toDate());
+        game.players?.forEach((player) => {
+          if (
             player.name === gamePlayer &&
-              player.payment === 'PENDING' &&
-              player.lost == true;
-          })
-        ) {
-          this.nonSubgameSum += this.round(
-            this.calculateTotalAmount(
-              game.board,
-              game.startTime,
-              game.endTime!
-            ) / this.countLostPlayers(game.players)
-          );
-          console.log(this.nonSubgameSum);
-        }
-      }
-    });
+            player.payment === 'PENDING' &&
+            playedCreatedDate >= startDate &&
+            playedCreatedDate <= endDate
+          ) {
+            console.log(game.created.toDate());
+            this.nonSubgameSum += this.round(
+              this.calculateTotalAmount(
+                game.board,
+                game.startTime,
+                game.endTime!
+              ) / this.countLostPlayers(game.players!)
+            );
+            console.log(this.nonSubgameSum);
+          }
+        });
+      });
+    }
   }
 
   gameAmountSub() {
