@@ -30,6 +30,8 @@ export class CalciComponent {
   nonSubgameSum: number = 0;
   orderSubmitting: boolean = false;
 
+  filteredData: any = [];
+
   gameForm = this.fb.group({
     player: ['', Validators.required],
     startDate: ['', Validators.required],
@@ -47,6 +49,14 @@ export class CalciComponent {
     startDate: ['', Validators.required],
     endDate: ['', Validators.required],
   });
+
+  filterForm = this.fb.group({
+    billType: ['', Validators.required],
+    member: ['', Validators.required],
+    startDate: ['', Validators.required],
+    endDate: ['', Validators.required],
+  });
+
   constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
@@ -142,7 +152,11 @@ export class CalciComponent {
     if (gamePlayer && (!startDate || !endDate)) {
       this.games.forEach((game) => {
         game.players?.forEach((player) => {
-          if (player.name === gamePlayer && player.payment === 'PENDING') {
+          if (
+            player.name === gamePlayer &&
+            player.payment === 'PENDING' &&
+            player.lost === true
+          ) {
             console.log(game.created.toDate());
             this.nonSubgameSum += this.round(
               this.calculateTotalAmount(
@@ -162,6 +176,7 @@ export class CalciComponent {
           if (
             player.name === gamePlayer &&
             player.payment === 'PENDING' &&
+            player.lost === true &&
             playedCreatedDate >= startDate &&
             playedCreatedDate <= endDate
           ) {
@@ -191,47 +206,45 @@ export class CalciComponent {
       ? new Date(this.gameForm.value.endDate)
       : null;
 
-    this.games.forEach((game) => {
-      const res = game.players?.find(
-        (player) =>
-          player.name === subscriber &&
-          player.payment === 'PENDING' &&
-          player.lost === true
-      );
-      console.log(res);
+    if (subscriber && (!startDate || !endDate)) {
+      this.games.forEach((game) => {
+        game.players?.forEach((player) => {
+          if (
+            player.name === subscriber &&
+            player.payment === 'PENDING' &&
+            player.lost === true
+          ) {
+            console.log(game);
 
-      if (subscriber && (!startDate || !endDate)) {
-        if (
-          game.players?.find(
-            (player) =>
-              player.name === subscriber &&
-              player.payment === 'PENDING' &&
-              player.lost === true
-          )
-        ) {
-          this.subgameSum += Number(
-            this.calculateMinutes(game.startTime, game.endTime!) /
-              this.countLostPlayers(game.players!)
-          );
-        }
-      } else if (subscriber && startDate && endDate) {
-        if (
-          game.players?.find(
-            (player) =>
-              player.name === subscriber &&
-              player.payment === 'PENDING' &&
-              player.lost === true
-          )
-        ) {
-          const playedCreatedDate = new Date(game.created.toDate());
-          if (playedCreatedDate >= startDate && playedCreatedDate <= endDate) {
-            this.subgameSum +=
+            let sum = Number(
               this.calculateMinutes(game.startTime, game.endTime!) /
-              this.countLostPlayers(game.players!);
+                this.countLostPlayers(game.players!)
+            );
+            console.log(sum);
+
+            this.subgameSum += sum;
           }
-        }
-      }
-    });
+        });
+      });
+    } else if (subscriber && startDate && endDate) {
+      this.games.forEach((game) => {
+        const playedCreatedDate = new Date(game.created.toDate());
+        game.players?.forEach((player) => {
+          if (
+            player.name === subscriber &&
+            player.payment === 'PENDING' &&
+            player.lost === true &&
+            playedCreatedDate >= startDate &&
+            playedCreatedDate <= endDate
+          ) {
+            this.subgameSum += Number(
+              this.calculateMinutes(game.startTime, game.endTime!) /
+                this.countLostPlayers(game.players!)
+            );
+          }
+        });
+      });
+    }
   }
 
   orderAmount() {
@@ -266,5 +279,35 @@ export class CalciComponent {
         }
       }
     });
+  }
+
+  viewTable() {
+    if (this.filterForm.valid) {
+      let filterData = this.filterForm.value;
+      let startDate = filterData.startDate
+        ? new Date(filterData.startDate)
+        : null;
+      let endDate = filterData.endDate ? new Date(filterData.endDate) : null;
+
+      if (filterData.billType === 'games') {
+        this.filteredData = this.games.filter((game) => {
+          game.players?.filter((player) => {
+            player.name.toLowerCase() === filterData.member?.toLowerCase() &&
+              player.lost === true &&
+              player.payment === 'PENDING' &&
+              new Date(game.created.toDate()) >= startDate! &&
+              new Date(game.created.toDate()) <= endDate!;
+          });
+        });
+        console.log(this.filteredData);
+      } else if (filterData.billType === 'orders') {
+        this.filteredData = this.orders.filter((order) => {
+          order.customer.toLowerCase() === filterData.member?.toLowerCase() &&
+            new Date(order.created.toDate()) >= startDate! &&
+            new Date(order.created.toDate()) <= endDate!;
+        });
+        console.log(this.filteredData);
+      }
+    }
   }
 }
